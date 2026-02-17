@@ -51,21 +51,25 @@ app.use("/api/products", productRoutes);
 app.use(errorHandler);
 
 // 6. Server Initialization
-// Render uses port 10000 by default, so we prioritize the env variable
+// ---------------- SERVER START ----------------
+// 1. Force port 10000 for Render Free Tier if PORT is not found
 const PORT = process.env.PORT || 10000;
 
 const startServer = async () => {
   try {
-    // Wait for Database to connect before starting the server
-    await connectDb();
-    console.log("✅ MongoDB Connected Successfully");
-    
-    app.listen(PORT, () => {
+    // 2. Start listening FIRST so Render sees the port as 'open'
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
+
+    // 3. Then connect to the database
+    console.log("Attempting to connect to MongoDB...");
+    await connectDb();
+    console.log("✅ MongoDB Connected Successfully");
+
   } catch (error) {
     console.error("❌ Deployment failed during startup:", error.message);
-    process.exit(1); // Exit process with failure
+    // On the Free tier, it's better to keep the server alive so you can check logs
   }
 };
 
