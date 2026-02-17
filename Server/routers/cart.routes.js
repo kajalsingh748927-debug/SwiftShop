@@ -5,7 +5,7 @@ import {
   updateCartItem,
   removeFromCart,
   clearCart,
-} from "../controllers/cart.controller.js";
+} from "../Controllers/cart.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
 import { isUser } from "../middleware/role.middleware.js";
